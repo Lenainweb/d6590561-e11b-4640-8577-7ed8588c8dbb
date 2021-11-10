@@ -1,0 +1,17 @@
+*.log
+
+*.sqlite
+
+*.pyc
+
+*.idea
+
+__pycache__/
+
+*.env
+
+flask_fh_venv/
+
+instance/
+
+.pytest_cache/
