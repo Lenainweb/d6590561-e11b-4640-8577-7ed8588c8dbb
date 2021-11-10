@@ -11,12 +11,12 @@ bp = Blueprint('file_host', __name__)
 @bp.route('/')
 def index():
     db = get_db()
+  
     files = db.execute(
-        'SELECT f.id, original_filename, onwer_id, owner'
-        ' FROM file f JOIN user u ON f.onwer_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
-    return render_template('blog/index.html', files=files)
+      'SELECT file_id, original_name, permission_of_file,file_path '
+      ' FROM file_base').fetchall()
+    print(files[1])
+    return render_template('file_host/index.html', files=files)
 
 # @bp.route('/upload', methods=('GET', 'POST', 'FILE'))
 # @login_required

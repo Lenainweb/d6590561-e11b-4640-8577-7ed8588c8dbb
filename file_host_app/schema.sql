@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS FILE_base;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -7,11 +7,16 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
-CREATE TABLE post (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  title TEXT NOT NULL,
-  body TEXT NOT NULL,
-  FOREIGN KEY (author_id) REFERENCES user (id)
+CREATE TABLE file_base (
+  file_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  original_name	VARCHAR(50),
+  permission_of_file VARCHAR(20) NOT NULL default 'private',	
+  file_path VARCHAR(100),
+  count_download	INTEGER	,
+  file_by_link INTEGER 
 );
+
+
+
+
+
