@@ -3,8 +3,7 @@
 ##### Clone the repo
 
 ```
-$ git clone 
-$ cd 
+$ git clone https://github.com/Lenainweb/d6590561-e11b-4640-8577-7ed8588c8dbb.git
 ```
 
 ##### Initialize a virtualenv
