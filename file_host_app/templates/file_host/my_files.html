@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Files{% endblock %}</h1>
+  <h1>{% block title %}My files{% endblock %}</h1>
   {% if g.user %}
     <a class="action" href="{{ url_for('file_host.my_files') }}">My files</a>
     <a class="action" href="{{ url_for('file_host.my_links') }}">My links</a>
@@ -14,8 +14,9 @@
     <article class="file">
       <header>
         <div>
-          <h1><a class="action" href="{{ url_for('file_host.download', file_id=file['file_id']) }}">{{ file['original_name'] }}</a></h1>
+          <h1>{{ file['original_name'] }}</h1>
         </div>
+        
       </header>
     </article>
     {% if not loop.last %}
