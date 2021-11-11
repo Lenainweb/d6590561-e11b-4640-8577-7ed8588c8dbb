@@ -42,7 +42,7 @@ def upload():
             original_name = file.filename
             permission_of_file = request.form['permission']	
             file_path = get_name_uuid()
-            file.save(UPLOAD_FOLDER+'\\'+file_path)
+            file.save(UPLOAD_FOLDER+'/'+file_path)
 
             db = get_db()
             db.execute(
@@ -62,8 +62,10 @@ def upload():
 
 
 def count_downloaded(file_id):
+    print(file_id)
     db = get_db()
-    db.execute('UPDATE file_base SET count_download = count_download + 1 WHERE file_id = ?', (file_id))
+    db.execute('UPDATE file_base SET count_download = count_download + 1 WHERE file_id = ?', (file_id,))
+    db.commit()
 
 
 @bp.route('/download/<path:file_id>', methods=['GET', 'POST'])
@@ -72,7 +74,7 @@ def download(file_id):
     file_id = file_id
     error = None
     db = get_db()
-
+    
     file = db.execute(
       'SELECT original_name, permission_of_file, file_path, user_id FROM file_base WHERE file_id = ?',(file_id,)).fetchone()
 
@@ -90,7 +92,7 @@ def download(file_id):
                     ' VALUES (?, ?)',
                     (g.user['id'], file_id))
             db.commit()
-        count_downloaded(file_id)
+        # count_downloaded(file_id)
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
 
     else:

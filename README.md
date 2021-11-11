@@ -19,6 +19,12 @@ $ . venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
+##### Сreating a download folder
+
+```
+$ file_host_app/static/uploade
+```
+
 ## Running the server
 
 
@@ -26,12 +32,12 @@ $ pip install -r requirements.txt
 ```
 $ export FLASK_APP=file_host_app
 $ export FLASK_ENV=development
+```
 
 ##### Create the database
 
 ```
-flask init-db
-```
+$ flask init-db
 
 $ flask run
 ```
