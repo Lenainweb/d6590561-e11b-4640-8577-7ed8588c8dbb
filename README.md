@@ -19,18 +19,19 @@ $ . venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
+## Running the server
+
+
+### Start Flask
+```
+$ export FLASK_APP=file_host_app
+$ export FLASK_ENV=development
+
 ##### Create the database
 
 ```
 flask init-db
 ```
 
-## Running the server
-
-
-#### Start Flask
-```
-$ export FLASK_APP=file_host_app
-$ export FLASK_ENV=development
 $ flask run
 ```

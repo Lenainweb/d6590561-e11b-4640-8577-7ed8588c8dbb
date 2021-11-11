@@ -14,7 +14,7 @@
     <article class="file">
       <header>
         <div>
-          <h1>{{ file['original_name'] }}</h1>
+          <h1><a class="action" href="{{ url_for('file_host.download', file_id=file['file_id']) }}">{{ file['original_name'] }}</a></h1>
         </div>
         
       </header>
