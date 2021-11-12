@@ -10,8 +10,11 @@ from file_host_app.db import get_db
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
-
 def register():
+    """ 
+    user registration page 
+    """
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -43,6 +46,10 @@ def register():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    """ 
+    user authentication page 
+    """ 
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

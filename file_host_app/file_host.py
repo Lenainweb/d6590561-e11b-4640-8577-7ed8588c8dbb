@@ -1,10 +1,8 @@
+import uuid
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, send_from_directory
 )
-from werkzeug.exceptions import abort
-from werkzeug.utils import secure_filename
-
-import uuid
 
 from file_host_app.auth import login_required
 from file_host_app.db import get_db
@@ -23,6 +21,7 @@ def index():
     files = db.execute(
       'SELECT file_id, original_name, permission_of_file,file_path '
       ' FROM file_base WHERE permission_of_file="pablic" ORDER BY count_download DESC').fetchall()   
+    
     return render_template('file_host/index.html', files=files)
 
 
@@ -56,6 +55,7 @@ def upload():
                 (original_name, g.user['id'], permission_of_file, file_path)
             )
             db.commit()
+            
             return redirect(url_for('file_host.index'))
 
         if not file:
@@ -63,6 +63,7 @@ def upload():
 
         if error is not None:
             flash(error)          
+    
     return render_template('file_host/upload.html')
 
 
@@ -82,6 +83,7 @@ def download(file_id):
     """ 
     file download  
     """
+    
     file_id = file_id
     error = None
     db = get_db()    
@@ -91,6 +93,7 @@ def download(file_id):
 
     if file[3] == g.user['id']:
         count_downloaded(file_id)
+        
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
 
     elif file[1] != 'private':
@@ -105,6 +108,7 @@ def download(file_id):
                     (g.user['id'], file_id))
             db.commit()
         count_downloaded(file_id)
+        
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
 
     else:
@@ -124,6 +128,7 @@ def my_files():
     files = db.execute(
       'SELECT file_id, original_name, permission_of_file, file_path '
       'FROM file_base f JOIN user u  ON f.user_id = u.id ORDER BY count_download DESC').fetchall()
+    
     return render_template('file_host/my_files.html', files=files)
 
 
@@ -140,4 +145,5 @@ def my_links():
     'FROM file_base WHERE file_id IN (SELECT fileid_id FROM user_links WHERE user_id=?)' 
     'ORDER BY count_download DESC', (g.user['id'],)
     ).fetchall()
+    
     return render_template('file_host/my_links.html', files=files)
