@@ -15,8 +15,11 @@ bp = Blueprint('file_host', __name__)
 
 @bp.route('/')
 def index():
-    db = get_db()
-  
+    """
+    main page with a list of all public files 
+    """
+    
+    db = get_db()  
     files = db.execute(
       'SELECT file_id, original_name, permission_of_file,file_path '
       ' FROM file_base WHERE permission_of_file="pablic" ORDER BY count_download DESC').fetchall()   
@@ -26,6 +29,9 @@ def index():
 @bp.route('/upload', methods=('GET', 'POST'))
 @login_required
 def upload():
+    """ 
+    page with a file adding form 
+    """
 
     def allowed_file(filename):
         return '.' in filename and \
@@ -43,7 +49,6 @@ def upload():
             permission_of_file = request.form['permission']	
             file_path = get_name_uuid()
             file.save(UPLOAD_FOLDER+'/'+file_path)
-
             db = get_db()
             db.execute(
                 'INSERT INTO file_base (original_name, user_id, permission_of_file, file_path)'
@@ -62,6 +67,9 @@ def upload():
 
 
 def count_downloaded(file_id):
+    """
+    link clicks counter
+    """
     print(file_id)
     db = get_db()
     db.execute('UPDATE file_base SET count_download = count_download + 1 WHERE file_id = ?', (file_id,))
@@ -71,19 +79,23 @@ def count_downloaded(file_id):
 @bp.route('/download/<path:file_id>', methods=['GET', 'POST'])
 @login_required
 def download(file_id):
+    """ 
+    file download  
+    """
     file_id = file_id
     error = None
-    db = get_db()
-    
+    db = get_db()    
     file = db.execute(
-      'SELECT original_name, permission_of_file, file_path, user_id FROM file_base WHERE file_id = ?',(file_id,)).fetchone()
+      'SELECT original_name, permission_of_file, file_path, user_id' 
+      'FROM file_base WHERE file_id = ?',(file_id,)).fetchone()
 
     if file[3] == g.user['id']:
         count_downloaded(file_id)
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
 
     elif file[1] != 'private':
-        existing_entry = db.execute('SELECT user_id FROM user_links WHERE (user_id = ?) AND  (fileid_id = ?) ',(g.user['id'], file_id, )).fetchone()
+        existing_entry = db.execute('SELECT user_id FROM user_links' 
+        'WHERE (user_id = ?) AND  (fileid_id = ?) ',(g.user['id'], file_id, )).fetchone()
 
         if existing_entry is None:
             db = get_db()
@@ -92,7 +104,7 @@ def download(file_id):
                     ' VALUES (?, ?)',
                     (g.user['id'], file_id))
             db.commit()
-        # count_downloaded(file_id)
+        count_downloaded(file_id)
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
 
     else:
@@ -103,6 +115,9 @@ def download(file_id):
 @bp.route('/my_files')
 @login_required
 def my_files():
+    """ 
+    displays a list of files uploaded by the user 
+    """
     db = get_db()
     error = None
 
@@ -115,8 +130,14 @@ def my_files():
 @bp.route('/my_links')
 @login_required
 def my_links():
+    """
+    displays a list of files the user has access to
+    """
+    
     db = get_db()
-  
-    files = db.execute('SELECT file_id, original_name, permission_of_file,file_path FROM file_base WHERE file_id IN (SELECT fileid_id FROM user_links WHERE user_id=?) ORDER BY count_download DESC', (g.user['id'],)
+      
+    files = db.execute('SELECT file_id, original_name, permission_of_file,file_path' 
+    'FROM file_base WHERE file_id IN (SELECT fileid_id FROM user_links WHERE user_id=?)' 
+    'ORDER BY count_download DESC', (g.user['id'],)
     ).fetchall()
     return render_template('file_host/my_links.html', files=files)
