@@ -20,8 +20,7 @@ def register():
         password = request.form['password']
         db = get_db()
         error = None
-        print(generate_password_hash(password))
-
+        
         if not username:
             error = 'Username is required.'
         elif not password:

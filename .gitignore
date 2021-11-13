@@ -18,3 +18,5 @@ instance/
 .pytest_cache/
 
 upload/
+
+file_host_app.egg-info/

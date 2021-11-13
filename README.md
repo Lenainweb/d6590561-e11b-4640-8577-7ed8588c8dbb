@@ -41,3 +41,8 @@ $ flask init-db
 
 $ flask run
 ```
+
+##### Use pip to install your project in the virtual environment.
+```
+$ pip install -e .
+```
