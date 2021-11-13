@@ -71,7 +71,6 @@ def count_downloaded(file_id):
     """
     link clicks counter
     """
-    print(file_id)
     db = get_db()
     db.execute('UPDATE file_base SET count_download = count_download + 1 WHERE file_id = ?', (file_id,))
     db.commit()
@@ -88,8 +87,7 @@ def download(file_id):
     error = None
     db = get_db()    
     file = db.execute(
-      'SELECT original_name, permission_of_file, file_path, user_id' 
-      'FROM file_base WHERE file_id = ?',(file_id,)).fetchone()
+      'SELECT original_name, permission_of_file, file_path, user_id FROM file_base WHERE file_id = ?',(file_id,)).fetchone()
 
     if file[3] == g.user['id']:
         count_downloaded(file_id)
@@ -141,8 +139,7 @@ def my_links():
     
     db = get_db()
       
-    files = db.execute('SELECT file_id, original_name, permission_of_file,file_path' 
-    'FROM file_base WHERE file_id IN (SELECT fileid_id FROM user_links WHERE user_id=?)' 
+    files = db.execute('SELECT file_id, original_name, permission_of_file,file_path FROM file_base WHERE file_id IN (SELECT fileid_id FROM user_links WHERE user_id=?)' 
     'ORDER BY count_download DESC', (g.user['id'],)
     ).fetchall()
     
