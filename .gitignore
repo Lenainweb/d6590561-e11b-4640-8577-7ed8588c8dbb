@@ -20,3 +20,5 @@ instance/
 upload/
 
 file_host_app.egg-info/
+
+*.code-workspace
