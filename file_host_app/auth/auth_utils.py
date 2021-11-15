@@ -1,8 +1,20 @@
-from flask import g
+import functools
+
+from flask import g, redirect, url_for
 
 from werkzeug.security import generate_password_hash
 
 from file_host_app.db import get_db
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
 
 def create_user(username, password):
     """
@@ -32,7 +44,10 @@ def load_user(user_id):
     """
     Places user information into a global variable.
     """
-    g.user = get_db().execute(
+    user = get_db().execute(
         'SELECT * FROM user WHERE id = ?', (user_id,)
     ).fetchone()
+
+    return user
+
 

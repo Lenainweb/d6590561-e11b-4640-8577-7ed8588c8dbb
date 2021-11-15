@@ -1,6 +1,6 @@
 import uuid
 from file_host_app.db import get_db
-from ..config import ALLOWED_EXTENSIONS
+from config import ALLOWED_EXTENSIONS
 
 # def index():
 def data_of_pablic_files():

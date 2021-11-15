@@ -2,11 +2,13 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, send_from_directory
 )
 
-from file_host_app.auth import login_required
-from ..config import UPLOAD_FOLDER
-from utils import utils_file
+from auth.auth_utils import login_required
+from config import UPLOAD_FOLDER
+from . import file_host as bp
+from files import files_utils
+# from auth.auth_view import *
 
-bp = Blueprint('file_host', __name__)
+# bp = Blueprint('file_host', __name__)
 
 @bp.route('/')
 def index():
@@ -14,8 +16,8 @@ def index():
     main page with a list of all public files 
     """
     
-    files =  utils_file.data_of_pablic_files()  
-    
+    files =  files_utils.data_of_pablic_files()  
+    # print(url_for('auth.login'))
     return render_template('file_host/index.html', files=files)
 
 
@@ -31,13 +33,13 @@ def upload():
     
     file = request.files['file']
 
-    if file and utils_file.allowed_file(file.filename):
+    if file and files_utils.allowed_file(file.filename):
         original_name = file.filename
         permission_of_file = request.form['permission']	
-        file_path = utils_file.get_name_uuid()
+        file_path = files_utils.get_name_uuid()
         file.save(UPLOAD_FOLDER+'/'+file_path)
         
-        utils_file.upload_file(original_name, g.user['id'], permission_of_file, file_path)
+        files_utils.upload_file(original_name, g.user['id'], permission_of_file, file_path)
         
         return redirect(url_for('file_host.index'))
 
@@ -54,19 +56,19 @@ def download(file_id):
     file_id = file_id
     error = None
     
-    file = utils_file.download_file(file_id)
+    file = files_utils.download_file(file_id)
     
     if file[3] == g.user['id']:
-        utils_file.count_downloaded(file_id)
+        files_utils.count_downloaded(file_id)
         
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
 
     if file[1] != 'private':
-        existing_entry = utils_file.check_access_by_link(g.user['id'], file_id)
+        existing_entry = files_utils.check_access_by_link(g.user['id'], file_id)
 
         if existing_entry is None:
-            utils_file.create_access_by_link(g.user['id'], file_id)
-        utils_file.count_downloaded(file_id)
+            files_utils.create_access_by_link(g.user['id'], file_id)
+        files_utils.count_downloaded(file_id)
         
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
     
@@ -79,7 +81,7 @@ def my_files():
     """ 
     displays a list of files uploaded by the user 
     """
-    files = utils_file.data_of_user_files()
+    files = files_utils.data_of_user_files()
     
     return render_template('file_host/my_files.html', files=files)
 
@@ -91,6 +93,6 @@ def my_links():
     displays a list of files the user has access to
     """
 
-    files = utils_file.data_of_links_users(g.user['id'])
+    files = files_utils.data_of_links_users(g.user['id'])
         
     return render_template('file_host/my_links.html', files=files)

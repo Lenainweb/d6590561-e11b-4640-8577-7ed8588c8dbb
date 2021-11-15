@@ -1,13 +1,13 @@
-import functools
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash
 
-from utils import utils_auth
+from . import auth as bp
+from . import auth_utils
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+# bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -27,7 +27,7 @@ def register():
 
         if error is None:
             try:
-                utils_auth.create_user(username, password)
+                auth_utils.create_user(username, password)
             except:
                 error = f"User {username} is already registered."
             else:
@@ -48,7 +48,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         error = None
-        user = utils_auth.data_of_user(username, password)
+        user = auth_utils.data_of_user(username)
 
         if user is None:
             error = 'Incorrect username.'
@@ -58,6 +58,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
+            g.user = auth_utils.load_user(session.get('user_id'))
             return redirect(url_for('index'))
 
         flash(error)
@@ -71,19 +72,12 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = utils_auth.load_user(user_id)
+        g.user = auth_utils.load_user(user_id)
 
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
 
-        return view(**kwargs)
 
-    return wrapped_view
