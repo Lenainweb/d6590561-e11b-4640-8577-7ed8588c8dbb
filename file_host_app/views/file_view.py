@@ -3,7 +3,7 @@ from flask import (
 )
 
 from file_host_app.auth import login_required
-from ..config import UPLOAD_FOLDER, ALLOWED_EXTENSIONS
+from ..config import UPLOAD_FOLDER
 from utils import utils_file
 
 bp = Blueprint('file_host', __name__)
@@ -26,26 +26,23 @@ def upload():
     page with a file adding form 
     """
 
-    if request.method == 'POST':
-        file = request.files['file']
-        error = None
-
-        if file and utils_file.allowed_file(file.filename):
-            original_name = file.filename
-            permission_of_file = request.form['permission']	
-            file_path = utils_file.get_name_uuid()
-            file.save(UPLOAD_FOLDER+'/'+file_path)
-            
-            utils_file.upload_file(original_name, g.user['id'], permission_of_file, file_path)
-           
-            return redirect(url_for('file_host.index'))
-
-        if not file:
-            flash('File is required.')
+    if request.method == 'GET':
+        return render_template('file_host/upload.html')  
     
-    return render_template('file_host/upload.html')
+    file = request.files['file']
 
+    if file and utils_file.allowed_file(file.filename):
+        original_name = file.filename
+        permission_of_file = request.form['permission']	
+        file_path = utils_file.get_name_uuid()
+        file.save(UPLOAD_FOLDER+'/'+file_path)
+        
+        utils_file.upload_file(original_name, g.user['id'], permission_of_file, file_path)
+        
+        return redirect(url_for('file_host.index'))
 
+    if not file:
+        flash('File is required.')
 
 @bp.route('/download/<path:file_id>', methods=['GET', 'POST'])
 @login_required
@@ -72,10 +69,8 @@ def download(file_id):
         utils_file.count_downloaded(file_id)
         
         return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
-
     
-    error = 'No permission to download the file.'
-    flash(error)
+    flash('No permission to download the file.')
 
 
 @bp.route('/my_files')
@@ -84,8 +79,6 @@ def my_files():
     """ 
     displays a list of files uploaded by the user 
     """
-    error = None
-
     files = utils_file.data_of_user_files()
     
     return render_template('file_host/my_files.html', files=files)
