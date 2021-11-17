@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, send_from_directory
+    flash, g, redirect, render_template, request, url_for, send_from_directory
 )
 
 from auth.auth_utils import login_required
@@ -7,13 +7,14 @@ from config import UPLOAD_FOLDER
 from . import file_host as bp
 from files import files_utils
 
+
 @bp.route('/')
 def index():
     """
     main page with a list of all public files 
     """
     
-    files =  files_utils.data_of_pablic_files()  
+    files = files_utils.data_of_pablic_files()  
 
     return render_template('file_host/index.html', files=files)
 
@@ -36,12 +37,14 @@ def upload():
         file_path = files_utils.get_name_uuid()
         file.save(UPLOAD_FOLDER+'/'+file_path)
         
-        files_utils.upload_file(original_name, g.user['id'], permission_of_file, file_path)
+        files_utils.upload_file(original_name, g.user['id'], 
+            permission_of_file, file_path)
         
         return redirect(url_for('file_host.index'))
 
     if not file:
         flash('File is required.')
+
 
 @bp.route('/download/<path:file_id>', methods=['GET', 'POST'])
 @login_required
@@ -51,14 +54,15 @@ def download(file_id):
     """
     
     file_id = file_id
-    error = None
     
     file = files_utils.download_file(file_id)
     
     if file[3] == g.user['id']:
         files_utils.count_downloaded(file_id)
         
-        return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
+        return send_from_directory(UPLOAD_FOLDER, file[2], 
+            attachment_filename=file[0], 
+            as_attachment=True)
 
     if file[1] != 'private':
         existing_entry = files_utils.check_access_by_link(g.user['id'], file_id)
@@ -67,7 +71,9 @@ def download(file_id):
             files_utils.create_access_by_link(g.user['id'], file_id)
         files_utils.count_downloaded(file_id)
         
-        return send_from_directory(UPLOAD_FOLDER, file[2], attachment_filename=file[0], as_attachment=True)
+        return send_from_directory(UPLOAD_FOLDER, file[2], 
+            attachment_filename=file[0], 
+            as_attachment=True)
     
     flash('No permission to download the file.')
 

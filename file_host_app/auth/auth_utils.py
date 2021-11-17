@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash
 
 from file_host_app.db import get_db
 
+
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -15,6 +16,7 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
 
 def create_user(username, password):
     """
@@ -26,7 +28,8 @@ def create_user(username, password):
         (username, generate_password_hash(password)),
     )
     db.commit()
-            
+
+
 def data_of_user(username):
     """
     Returns data about the current user.
@@ -35,8 +38,9 @@ def data_of_user(username):
     user = db.execute(
         'SELECT * FROM user WHERE username = ?', (username,)
     ).fetchone()
-    
+
     return user
+
 
 def load_user(user_id):
     """
@@ -47,5 +51,3 @@ def load_user(user_id):
     ).fetchone()
 
     return user
-
-

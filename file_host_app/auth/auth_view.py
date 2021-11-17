@@ -1,6 +1,6 @@
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash
 
@@ -10,7 +10,7 @@ from . import auth_utils
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
-    """ 
+    """
     user registration page 
     """
 
@@ -28,13 +28,11 @@ def register():
         error = 'Password is required.'
 
     if error is None:
-        try:
-            auth_utils.create_user(username, password)
-        except:
-            error = f"User {username} is already registered."
-            return render_template('auth/register.html')
-        else:
-            return redirect(url_for("auth.login"))
+        auth_utils.create_user(username, password)
+        return redirect(url_for("auth.login"))
+    else:
+        return render_template('auth/register.html')
+
 
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -78,6 +76,3 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
-
-

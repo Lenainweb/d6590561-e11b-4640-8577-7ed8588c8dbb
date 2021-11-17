@@ -33,5 +33,5 @@ def create_app(test_config=None):
     from file_host_app.files import file_host as files_bp
     app.register_blueprint(files_bp)
     app.add_url_rule('/', endpoint='index')
-    
+
     return app
