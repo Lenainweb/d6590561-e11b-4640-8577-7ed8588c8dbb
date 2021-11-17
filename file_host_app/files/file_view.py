@@ -6,9 +6,6 @@ from auth.auth_utils import login_required
 from config import UPLOAD_FOLDER
 from . import file_host as bp
 from files import files_utils
-# from auth.auth_view import *
-
-# bp = Blueprint('file_host', __name__)
 
 @bp.route('/')
 def index():
@@ -17,7 +14,7 @@ def index():
     """
     
     files =  files_utils.data_of_pablic_files()  
-    # print(url_for('auth.login'))
+
     return render_template('file_host/index.html', files=files)
 
 

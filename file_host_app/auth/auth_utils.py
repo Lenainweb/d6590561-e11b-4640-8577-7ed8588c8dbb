@@ -27,7 +27,6 @@ def create_user(username, password):
     )
     db.commit()
             
-# def login():
 def data_of_user(username):
     """
     Returns data about the current user.
@@ -39,7 +38,6 @@ def data_of_user(username):
     
     return user
 
-# def load_logged_in_user():
 def load_user(user_id):
     """
     Places user information into a global variable.
