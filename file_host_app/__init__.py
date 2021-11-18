@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app(test_config=None):
@@ -25,6 +26,7 @@ def create_app(test_config=None):
         pass
 
     from . import db
+    # db = SQLAlchemy(app)
     db.init_app(app)
 
     from file_host_app.auth import auth as auth_bp
@@ -35,3 +37,11 @@ def create_app(test_config=None):
     app.add_url_rule('/', endpoint='index')
 
     return app
+
+
+
+
+
+
+
+# from app import views, models
