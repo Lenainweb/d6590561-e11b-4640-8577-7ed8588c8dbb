@@ -21,7 +21,7 @@ def index():
 
 @bp.route('/upload', methods=('GET',))
 @login_required
-def upload():
+def upload_get():
     """ 
     page with a file adding form 
     """
@@ -106,3 +106,14 @@ def my_links():
     files = files_utils.data_of_links_users(g.user['id'])
         
     return render_template('file_host/my_links.html', files=files)
+
+
+@bp.route('/download/part', methods=['POST',])
+@login_required
+def download_part_files():
+    """ 
+    download archive  
+    """
+    pass
+        
+   

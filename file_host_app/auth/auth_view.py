@@ -9,7 +9,7 @@ from . import auth_utils
 
 
 @bp.route('/register', methods=('GET',))
-def register():
+def register_get():
     """
     user registration page 
     """
@@ -40,7 +40,7 @@ def register():
 
 
 @bp.route('/login', methods=('GET',))
-def login():
+def login_get():
     """ 
     user authentication page 
     """ 

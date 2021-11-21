@@ -1,6 +1,7 @@
 import uuid
+from zipfile import ZipFile
 from file_host_app.db import get_db
-from config import ALLOWED_EXTENSIONS
+from config import ALLOWED_EXTENSIONS, UPLOAD_FOLDER
 
 
 def data_of_pablic_files():
@@ -115,4 +116,19 @@ def data_of_links_users(user_id):
         ).fetchall()
 
     return files
+
+async def make_zip():
+    """
+    """
+
+    db = get_db()    
+    file = db.execute(
+        ' SELECT original_name, permission_of_file, file_path, user_id ' 
+        ' FROM file_base').fetchone()
+
+    with ZipFile("test.zip", "w") as newzip:
+        newzip.write(UPLOAD_FOLDER+'/'+file[2])
+
+
     
+
