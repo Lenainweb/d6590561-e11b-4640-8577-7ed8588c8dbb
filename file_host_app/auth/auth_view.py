@@ -8,15 +8,20 @@ from . import auth as bp
 from . import auth_utils
 
 
-@bp.route('/register', methods=('GET', 'POST'))
+@bp.route('/register', methods=('GET',))
 def register():
     """
     user registration page 
     """
-
-    if request.method == 'GET':
         
-        return render_template('auth/register.html')
+    return render_template('auth/register.html')
+
+
+@bp.route('/register', methods=('POST',))
+def register():
+    """
+    user registration page 
+    """
    
     username = request.form['username']
     password = request.form['password']
@@ -34,17 +39,21 @@ def register():
         return render_template('auth/register.html')
 
 
-
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=('GET',))
 def login():
     """ 
     user authentication page 
     """ 
-    
-    if request.method == 'GET':
-        
-        return render_template('auth/login.html')
-        
+         
+    return render_template('auth/login.html')
+
+
+@bp.route('/login', methods=('POST',))
+def login():
+    """ 
+    user authentication page 
+    """ 
+
     username = request.form['username']
     password = request.form['password']
     error = None

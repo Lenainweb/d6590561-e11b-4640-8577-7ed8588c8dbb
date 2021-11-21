@@ -19,16 +19,23 @@ def index():
     return render_template('file_host/index.html', files=files)
 
 
-@bp.route('/upload', methods=('GET', 'POST'))
+@bp.route('/upload', methods=('GET',))
 @login_required
 def upload():
     """ 
     page with a file adding form 
     """
 
-    if request.method == 'GET':
-        return render_template('file_host/upload.html')  
+    return render_template('file_host/upload.html')  
     
+
+@bp.route('/upload', methods=('POST',))
+@login_required
+def upload():
+    """ 
+    page with a file adding form 
+    """
+
     file = request.files['file']
 
     if file and files_utils.allowed_file(file.filename):
@@ -46,7 +53,7 @@ def upload():
         flash('File is required.')
 
 
-@bp.route('/download/<path:file_id>', methods=['GET', 'POST'])
+@bp.route('/download/<path:file_id>', methods=['POST',])
 @login_required
 def download(file_id):
     """ 
