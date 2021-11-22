@@ -1,6 +1,7 @@
 *.log
 
 *.sqlite
+*.db
 
 *.pyc
 

@@ -1,32 +1,31 @@
 import os
+import click
+from flask.cli import with_appcontext
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+# from config import SQLALCHEMY_DATABASE_URI
+# from config import Config
 
+db = SQLAlchemy()
 
-def create_app(test_config=None):
+# @click.command('init-db')
+# @with_appcontext
+# def initdb():
+#     db.drop_all()
+#     db.create_all()
+
+# app.config.from_object(Config)
+
+def create_app(config):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'file_host_app.sqlite'),
-    )
+    app = Flask(__name__)
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+    # app.config.from_object(config)
+    app.config['SECRET_KEY'] = 'key'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'app.db') 
 
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-
-    from . import db
-    # db = SQLAlchemy(app)
     db.init_app(app)
 
     from file_host_app.auth import auth as auth_bp
@@ -35,8 +34,16 @@ def create_app(test_config=None):
     from file_host_app.files import file_host as files_bp
     app.register_blueprint(files_bp)
     app.add_url_rule('/', endpoint='index')
+    
+    # return app
+    from file_host_app.auth import models, auth_view, auth_utils
+    from file_host_app.files import models, file_view, files_utils
+
+    # with app.app_context(): 
+    #     db.create_all()
 
     return app
+
 
 
 
