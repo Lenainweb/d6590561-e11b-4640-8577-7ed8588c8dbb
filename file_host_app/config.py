@@ -11,5 +11,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db') 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db') 
+
 UPLOAD_FOLDER = os.path.join(basedir, 'static/upload')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
