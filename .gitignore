@@ -23,3 +23,5 @@ upload/
 file_host_app.egg-info/
 
 *.code-workspace
+
+client_for_req.py

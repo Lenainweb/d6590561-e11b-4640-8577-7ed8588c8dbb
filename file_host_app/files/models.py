@@ -11,6 +11,7 @@ class FileBase(db.Model):
     permission_of_file = db.Column(db.Enum('private', 'link', 'pablic', name = 'permission_of_file'), default = 'privat')	
     file_path = db.Column(db.String(80), nullable=False)
     count_download = db.Column(db.Integer, default=0)
+    link = db.relationship('UserLinks', backref='links_for_user', lazy='dynamic')
 
     def __repr__(self):
         return '<File %r>' % (self.original_name)

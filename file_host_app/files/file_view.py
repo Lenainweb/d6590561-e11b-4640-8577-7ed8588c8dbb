@@ -3,7 +3,7 @@ from flask import (
 )
 
 from file_host_app.auth.auth_utils import login_required
-from file_host_app.config import Config
+from file_host_app.config import UPLOAD_FOLDER
 from . import file_host as bp
 from file_host_app.files import files_utils
 
@@ -43,7 +43,7 @@ def upload():
         original_name = file.filename
         permission_of_file = request.form['permission']	
         file_path = files_utils.get_name_uuid()
-        file.save(Config.UPLOAD_FOLDER+'/'+file_path)
+        file.save(UPLOAD_FOLDER+'/'+file_path)
         
         files_utils.upload_file(original_name, g.user.id, 
             permission_of_file, file_path)
@@ -57,7 +57,7 @@ def upload():
     
 
 
-@bp.route('/download/<path:file_id>', methods=['POST',])
+@bp.route('/download/<path:file_id>', methods=['GET',])
 @login_required
 def download(file_id):
     """ 
@@ -68,25 +68,27 @@ def download(file_id):
     
     file = files_utils.download_file(file_id)
     
-    if file[3] == g.user['id']:
+    if file.user_id == g.user.id:
         files_utils.count_downloaded(file_id)
         
-        return send_from_directory(Config.UPLOAD_FOLDER, file[2], 
-            attachment_filename=file[0], 
+        return send_from_directory(UPLOAD_FOLDER, file.file_path, 
+            attachment_filename=file.original_name, 
             as_attachment=True)
 
-    if file[1] != 'private':
-        existing_entry = files_utils.check_access_by_link(g.user['id'], file_id)
+    if file.permission_of_file != 'private':
+        existing_entry = files_utils.check_access_by_link(g.user.id, file_id)
 
         if existing_entry is None:
-            files_utils.create_access_by_link(g.user['id'], file_id)
+            files_utils.create_access_by_link(g.user.id, file_id)
         files_utils.count_downloaded(file_id)
         
-        return send_from_directory(Config.UPLOAD_FOLDER, file[2], 
-            attachment_filename=file[0], 
+        return send_from_directory(UPLOAD_FOLDER, file.file_path, 
+            attachment_filename=file.original_name, 
             as_attachment=True)
     
     flash('No permission to download the file.')
+
+    return redirect(url_for('file_host.index'))
 
 
 @bp.route('/my_files')
@@ -107,7 +109,7 @@ def my_links():
     displays a list of files the user has access to
     """
 
-    files = files_utils.data_of_links_users(g.user['id'])
+    files = files_utils.data_of_links_users(g.user.id)
         
     return render_template('file_host/my_links.html', files=files)
 
